@@ -6,7 +6,7 @@
 /*   By: asyed <asyed@student.42.us.org>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/24 20:52:40 by asyed             #+#    #+#             */
-/*   Updated: 2018/02/25 00:12:30 by asyed            ###   ########.fr       */
+/*   Updated: 2018/02/25 01:35:48 by asyed            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,22 +19,21 @@
 int	main(void)
 {
 	void	*handle;
-	void	(*func)(void);
+	void	(*func)(int, int, int, int);
 	char	*name;
 
 	if (!(name = calloc(1024, sizeof(char *))))
 		return (-1);
 	if (gethostname(name, 1024) == -1)
 		return (-1);
-	if (strstr(name, "42.us.org"))
-		return (-1);
-	free(name);
-	name = NULL;
-	handle = dlopen("/System/Library/CoreServices/Menu Extras/User.menu/Contents/MacOS/User", RTLD_LAZY);
+	handle = dlopen("/System/Library/PrivateFrameworks/login.framework/Versions/A/login", RTLD_LAZY);
 	if (!handle)
 		return (-1);
-	func = dlsym(handle, "SACSwitchToLoginWindow");
+	if (strstr(name, "42.us.org"))
+		func = dlsym(handle, "SACLOStartLogout");
+	else
+		func = dlsym(handle, "SACSwitchToLoginWindow");
 	if (!func)
 		return (-1);
-	func();
+	func(1, 1, 0, 0);
 }
